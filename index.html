@@ -1,0 +1,140 @@
+<!doctype html> 
+<html lang="en"> 
+<head> 
+	<meta charset="UTF-8" />
+	<title>Phaser - Making your first game, part 2</title>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/phaser/2.4.4/phaser.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+
+        .novisible{
+          display: none;
+        }
+
+    </style>
+</head>
+<body>
+<h1>Puntaje</h1><span id="valor_puntaje"></span>
+
+<h1>Tiempo</h1><span id="tiempo"></span>
+
+<div class="novisible" id="mensaje-win" >
+
+    <h1>¡ Felicitaciones , has ganado !</h1>
+</div>
+
+<div class="novisible" id="mensaje-loser" >
+    <h1>Lo sentimos no ayudaste a convservar el ambiente</h1>
+</div>
+
+
+<script type="text/javascript">
+var puntaje = 0;
+var game = new Phaser.Game(600, 500, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create, update: update, render : render });
+
+function preload() {
+
+    //game.stage.backgroundColor = '#007236';
+  
+    game.load.image("background", "http://www.abcfotos.com/images/fotos-paisaje-postal.jpg");
+
+    game.load.image('mushroom', 'http://1.bp.blogspot.com/-uCz476WsCQU/VKGdFqXhWrI/AAAAAAAADsg/Dc0FYsT3zLs/s1600/150px-Banana_-_Mario_Kart_Wii.png');
+    game.load.image('sonic', 'http://1.bp.blogspot.com/-uCz476WsCQU/VKGdFqXhWrI/AAAAAAAADsg/Dc0FYsT3zLs/s1600/150px-Banana_-_Mario_Kart_Wii.png');
+    game.load.image('phaser', 'http://1.bp.blogspot.com/-uCz476WsCQU/VKGdFqXhWrI/AAAAAAAADsg/Dc0FYsT3zLs/s1600/150px-Banana_-_Mario_Kart_Wii.png');
+
+    game.load.audio('explosion', 'assets/tir.mp3');
+
+    game.load.image('starfield', 'http://www.abcfotos.com/images/fotos-paisaje-postal.jpg');
+
+}
+
+var cursors;
+var logo1;
+var logo2;
+var text;
+var bomba;
+var counter = 0;
+
+
+function create() {
+
+    bomba = game.add.audio('explosion');
+
+    //  Modify the world and camera bounds
+    game.world.resize(9000, 600);
+    starfield = game.add.tileSprite(0, 0, 9000, 600, 'starfield');
+
+    for (var i = 0; i < 500; i++)
+    {
+       var z =  game.add.sprite(game.world.randomX, game.world.randomY, 'mushroom');
+       z.inputEnabled=true;
+       z.events.onInputDown.add(listener,this);
+    }
+
+
+
+    cursors = game.input.keyboard.createCursorKeys();
+
+    game.time.events.loop(Phaser.Timer.SECOND, updateCounter, this);
+
+
+
+}
+
+
+function updateCounter() {
+
+    for (var i = 0; i < 5; i++)
+    {
+       var z =  game.add.sprite(game.world.randomX, game.world.randomY, 'mushroom');
+       z.inputEnabled=true;
+       z.events.onInputDown.add(listener,this);
+    }
+
+    if(counter === 60){
+          
+          game.destroy();
+          $('#mensaje-loser').css('display','block');
+
+    }else{
+         $('#tiempo').text(""+counter);
+          counter++;
+
+    }
+
+}
+
+
+function update() {
+
+     this.game.camera.x += 1;
+
+     if(puntaje === 2000 ){
+          game.destroy();
+         $('#mensaje-win').css('display','block');
+     }
+}
+
+function render() {
+
+    // game.debug.cameraInfo(game.camera, 32, 32);
+
+}
+
+function listener (sprite, pointer) {
+
+   puntaje+=10;
+   $('#valor_puntaje').text(puntaje+"");
+   game.world.remove(sprite);
+
+   bomba.play();
+
+}
+
+</script>
+
+</body>
+</html>
